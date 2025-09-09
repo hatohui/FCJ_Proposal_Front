@@ -1,4 +1,4 @@
-name: fuvekon CD
+name: CD
 
 on:
   push:
