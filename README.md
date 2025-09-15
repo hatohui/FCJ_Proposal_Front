@@ -1,5 +1,5 @@
-[![fuvekon CD](https://github.com/SoltuneMontepre/Fuvekon/actions/workflows/cd.yaml/badge.svg?branch=main)](https://github.com/SoltuneMontepre/Fuvekon/actions/workflows/cd.yaml) [![fuvekon CI](https://github.com/SoltuneMontepre/Fuvekon/actions/workflows/ci.yaml/badge.svg)](https://github.com/SoltuneMontepre/Fuvekon/actions/workflows/ci.yaml)
 
-Fuvekon thing
+[![CI](https://github.com/hatohui/TypeRush/actions/workflows/ci.yaml/badge.svg)](https://github.com/hatohui/TypeRush/actions/workflows/ci.yaml)
+[![CD](https://github.com/hatohui/TypeRush/actions/workflows/cd.yaml/badge.svg)](https://github.com/hatohui/TypeRush/actions/workflows/cd.yaml)
 
 (Someone write something here lol)
