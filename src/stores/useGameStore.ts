@@ -4,12 +4,17 @@ import { io, Socket } from 'socket.io-client'
 interface Player {
 	id: string
 	name: string
-	progress: number
 }
 
 interface GameConfig {
 	words: string[]
 	duration: number
+}
+
+interface Room {
+	roomId: string
+	players: Player[]
+	config: GameConfig
 }
 
 interface GameState {
@@ -18,9 +23,11 @@ interface GameState {
 	players: Player[]
 	config: GameConfig | null
 	connected: boolean
+	playerName: string | null
+	roomFull: boolean
 
 	connect: () => void
-	createRoom: () => void
+	createRoom: (playerName: string) => void
 	joinRoom: (roomId: string, name: string) => void
 	updateProgress: (progress: number) => void
 }
@@ -31,6 +38,8 @@ export const useGameStore = create<GameState>((set, get) => ({
 	players: [],
 	config: null,
 	connected: false,
+	playerName: null,
+	roomFull: false,
 
 	connect: () => {
 		if (get().socket) return
@@ -41,16 +50,17 @@ export const useGameStore = create<GameState>((set, get) => ({
 			set({ connected: true, socket })
 		})
 
-		socket.on('roomCreated', (roomId: string, config: GameConfig) => {
-			set({ roomId, config })
+		socket.on('roomCreated', (room: Room) => {
+			set({ roomId: room.roomId, players: room.players, config: room.config })
 		})
 
-		socket.on(
-			'roomJoined',
-			(roomId: string, players: Player[], config: GameConfig) => {
-				set({ roomId, players, config })
-			}
-		)
+		socket.on('roomJoined', (room: Room) => {
+			set({ roomId: room.roomId, players: room.players, config: room.config })
+		})
+
+		socket.on('roomFull', () => {
+			set({ roomFull: true })
+		})
 
 		socket.on('playerUpdate', (players: Player[]) => {
 			set({ players })
@@ -61,8 +71,8 @@ export const useGameStore = create<GameState>((set, get) => ({
 		})
 	},
 
-	createRoom: () => {
-		get().socket?.emit('createRoom')
+	createRoom: (playerName: string) => {
+		get().socket?.emit('createRoom', { name: playerName })
 	},
 
 	joinRoom: (roomId: string, name: string) => {
