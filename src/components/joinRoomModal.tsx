@@ -1,6 +1,6 @@
 import { Form, Input, Button, Modal } from 'antd'
 
-const JoinRoomModal = ({ open, onOk, confirmLoading, roomFull }: any) => {
+const JoinRoomModal = ({ open, onOk, confirmLoading, error }: any) => {
 	const [form] = Form.useForm()
 
 	const handleFinish = (values: { playerName: string; roomId?: string }) => {
@@ -47,7 +47,7 @@ const JoinRoomModal = ({ open, onOk, confirmLoading, roomFull }: any) => {
 					<Input placeholder='Leave empty to create room' />
 				</Form.Item>
 
-				{roomFull && <p>Room is full</p>}
+				{error.type !== '' && <p>{error.message}</p>}
 
 				{/* Submit Button */}
 				<Form.Item>

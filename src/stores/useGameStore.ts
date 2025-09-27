@@ -17,6 +17,11 @@ interface Room {
 	config: GameConfig
 }
 
+interface Error {
+	type: string
+	message: string
+}
+
 interface GameState {
 	socket: Socket | null
 	roomId: string | null
@@ -24,7 +29,7 @@ interface GameState {
 	config: GameConfig | null
 	connected: boolean
 	playerName: string | null
-	roomFull: boolean
+	error: Error
 
 	connect: () => void
 	createRoom: (playerName: string) => void
@@ -39,7 +44,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 	config: null,
 	connected: false,
 	playerName: null,
-	roomFull: false,
+	error: { type: '', message: '' },
 
 	connect: () => {
 		if (get().socket) return
@@ -55,11 +60,16 @@ export const useGameStore = create<GameState>((set, get) => ({
 		})
 
 		socket.on('roomJoined', (room: Room) => {
-			set({ roomId: room.roomId, players: room.players, config: room.config })
+			set({
+				roomId: room.roomId,
+				players: room.players,
+				config: room.config,
+				error: { type: '', message: '' },
+			})
 		})
 
-		socket.on('roomFull', () => {
-			set({ roomFull: true })
+		socket.on('errorEvent', (err: Error) => {
+			set({ error: err })
 		})
 
 		socket.on('playerUpdate', (players: Player[]) => {
@@ -67,7 +77,13 @@ export const useGameStore = create<GameState>((set, get) => ({
 		})
 
 		socket.on('disconnect', () => {
-			set({ connected: false, roomId: null, players: [], config: null })
+			set({
+				connected: false,
+				roomId: null,
+				players: [],
+				config: null,
+				error: { type: '', message: '' },
+			})
 		})
 	},
 

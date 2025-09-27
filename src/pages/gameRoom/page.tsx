@@ -10,8 +10,8 @@ const Page = () => {
 		connected,
 		roomId,
 		players,
-		roomFull,
-		config
+		config,
+		error,
 	} = useGameStore()
 	const [open, setOpen] = useState(true)
 	const [confirmLoading, setConfirmLoading] = useState(false)
@@ -29,14 +29,14 @@ const Page = () => {
 	}
 
 	useEffect(() => {
-		if (connected && roomId && !roomFull) {
+		if (connected && roomId && error.type === '') {
 			setConfirmLoading(false)
 			setOpen(false)
 		}
-		if (roomFull) {
+		if (error.type !== '') {
 			setConfirmLoading(false)
 		}
-	}, [connected, roomFull, roomId])
+	}, [connected, error, roomId])
 
 	return (
 		<div className='min-h-screen bg-[#383A3E] text-white flex flex-col'>
@@ -44,7 +44,7 @@ const Page = () => {
 				open={open}
 				onOk={handleOk}
 				confirmLoading={confirmLoading}
-				roomFull={roomFull}
+				error={error}
 			/>
 
 			<header className='bg-gray-800 px-6 py-4 flex justify-between items-center'>
